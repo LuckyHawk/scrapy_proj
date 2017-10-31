@@ -3,6 +3,8 @@ import scrapy
 import re
 from scrapy.http import Request
 import urlparse
+from scrapy_proj.items import JobBoleArticleItem
+
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -21,13 +23,38 @@ class JobboleSpider(scrapy.Spider):
             yield Request(url=urlparse.urljoin(response.url, next_page), callback=self.parse, dont_filter=True)
 
     def parse_detail(self, response):
+        article_item = JobBoleArticleItem()
+
+        front_image_url = response.meta.get("front_image_url","")
         title = response.xpath('//h1/text()').extract_first()
         create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract_first().strip()[:10]
-        prase_num = int(response.xpath('//h10/text()').extract_first())
-        fav_num = response.xpath('//div[@class="post-adds"]/span[2]/text()').extract_first()
-        re_fav_num = re.match(r'.*?(\d+).*',fav_num)
+
+        praise_nums = int(response.xpath('//h10/text()').extract_first())
+        fav_nums = response.xpath('//div[@class="post-adds"]/span[2]/text()').extract_first()
+        re_fav_num = re.match(r'.*?(\d+).*',fav_nums)
         if re_fav_num:
-            fav_num = re_fav_num.group(1)
+            fav_nums = int(re_fav_num.group(1))
         else:
-            fav_num = 0
-        print title, prase_num, fav_num
+            fav_nums = 0
+
+        comment_nums = response.xpath('//div[@class="post-adds"]/a/span/text()').extract_first()
+        re_comments_nums = re.match(r'.*?(\d+).*', comment_nums)
+        if re_comments_nums:
+            comment_nums = int(re_comments_nums.group(1))
+        else:
+            comment_nums = 0
+
+        content = response.xpath('//div[@class="entry"]').extract_first()
+        tags = ','.join(response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract())
+
+        article_item["front_image_url"] = [front_image_url]
+        article_item["title"] = title
+        article_item["create_date"] = create_date
+        article_item["praise_nums"] = praise_nums
+        article_item["fav_nums"] = fav_nums
+        article_item["comment_nums"] = comment_nums
+        article_item["content"] = content
+        article_item["tags"] = tags
+        article_item["url"] = response.url
+
+        yield article_item
