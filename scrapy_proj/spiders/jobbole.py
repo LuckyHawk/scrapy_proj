@@ -4,7 +4,7 @@ import re
 from scrapy.http import Request
 import urlparse
 from scrapy_proj.items import JobBoleArticleItem
-
+from scrapy_proj.utils.common import get_md5
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -56,5 +56,6 @@ class JobboleSpider(scrapy.Spider):
         article_item["content"] = content
         article_item["tags"] = tags
         article_item["url"] = response.url
+        article_item["url_object_id"] = get_md5(response.url)
 
         yield article_item
