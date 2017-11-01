@@ -27,6 +27,5 @@ class JobBoleArticleItem(scrapy.Item):
     content = scrapy.Field()
     tags = scrapy.Field()
 
-
     front_image_url = scrapy.Field()
     front_image_path = scrapy.Field()
