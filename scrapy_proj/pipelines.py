@@ -21,7 +21,7 @@ class ArticleImagePipeline(ImagesPipeline):
 
 class MysqlPipeline(object):
     def __init__(self):
-        self.conn = MySQLdb.connect("localhost","root","","jobbole",charset='utf-8',use_unicode=True)
+        self.conn = MySQLdb.connect("localhost","root","","scrapy",charset='utf-8',use_unicode=True)
         self.cursor = self.conn.cursor()
 
     def process_item(self, item, spider):
