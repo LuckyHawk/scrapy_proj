@@ -5,6 +5,7 @@ from scrapy.http import Request
 import urlparse
 from scrapy_proj.items import JobBoleArticleItem
 from scrapy_proj.utils.common import get_md5
+import datetime
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -46,6 +47,11 @@ class JobboleSpider(scrapy.Spider):
 
         content = response.xpath('//div[@class="entry"]').extract_first()
         tags = ','.join(response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract())
+
+        try:
+            create_date = datetime.datetime.strptime(create_date,"%Y/%m/%d").date()
+        except Exception as e:
+            create_date = datetime.datetime.now().date()
 
         article_item["front_image_url"] = [front_image_url]
         article_item["title"] = title

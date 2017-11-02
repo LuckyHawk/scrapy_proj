@@ -68,7 +68,8 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
     'scrapy_proj.pipelines.ScrapyProjPipeline': 300,
     #'scrapy.pipelines.images.ImagesPipeline':200
-    'scrapy_proj.pipelines.ArticleImagePipeline':200
+    'scrapy_proj.pipelines.ArticleImagePipeline':100,
+    'scrapy_proj.pipelines.MysqlPipeline':200
 }
 
 IMAGES_URLS_FIELD = "front_image_url"
