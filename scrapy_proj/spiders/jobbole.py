@@ -30,7 +30,11 @@ class JobboleSpider(scrapy.Spider):
         title = response.xpath('//h1/text()').extract_first()
         create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract_first().strip()[:10]
 
-        praise_nums = int(response.xpath('//h10/text()').extract_first())
+        praise_nums = response.xpath('//h10/text()').extract_first()
+        if praise_nums is None:
+            praise_nums = 0
+        else:
+            praise_nums = int(praise_nums)
         fav_nums = response.xpath('//div[@class="post-adds"]/span[2]/text()').extract_first()
         re_fav_num = re.match(r'.*?(\d+).*',fav_nums)
         if re_fav_num:
