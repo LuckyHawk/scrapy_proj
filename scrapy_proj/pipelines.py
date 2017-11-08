@@ -16,12 +16,13 @@ class ScrapyProjPipeline(object):
 class ArticleImagePipeline(ImagesPipeline):
     def item_completed(self, results, item, info):
         image_path = ""
-        for k, v in results:
-            try:
-                image_path = v["path"]
-            except:
-                pass
-        item["front_image_path"] = image_path
+        if "front_image_url" in item:
+            for k, v in results:
+                try:
+                    image_path = v["path"]
+                except:
+                    pass
+            item["front_image_path"] = image_path
         return item
 
 #会使数据库崩溃
@@ -71,8 +72,12 @@ class MysqlTwistedPipeline(object):
                                             front_image_url,front_image_path,comment_nums,fav_nums,
                                             praise_nums,tags,content)
          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-        cursor.execute(sql, (item['title'], item['create_date'], item['url']
-                                  , item['url_object_id'], item['front_image_url'], item['front_image_path']
-                                  , item['comment_nums'], item['fav_nums'], item['praise_nums']
-                                  , item['tags'], item['content']))
+        try:
+            cursor.execute(sql, (item['title'], item['create_date'], item['url']
+                                      , item['url_object_id'], item['front_image_url'][0], item['front_image_path']
+                                      , item['comment_nums'], item['fav_nums'], item['praise_nums']
+                                      , item['tags'], item['content']))
+        except KeyError:
+            with open('test.txt','a+') as f:
+                f.write(str(item))
 
