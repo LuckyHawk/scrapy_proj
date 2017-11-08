@@ -15,8 +15,12 @@ class ScrapyProjPipeline(object):
 
 class ArticleImagePipeline(ImagesPipeline):
     def item_completed(self, results, item, info):
+        image_path = ""
         for k, v in results:
-            image_path = v["path"]
+            try:
+                image_path = v["path"]
+            except:
+                pass
         item["front_image_path"] = image_path
         return item
 
